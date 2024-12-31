@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memex Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f8f9fa;
+        }
+        .search-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        input[type="text"] {
+            width: 50%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 25px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+        .results {
+            margin-top: 20px;
+            width: 80%;
+        }
+        .result {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .result:hover {
+            background-color: #f1f1f1;
+        }
+        .result a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <h1>Memex Search</h1>
+        <input type="text" id="searchBar" placeholder="Search..." onkeydown="if (event.key === 'Enter') performSearch();">
+        <button onclick="performSearch()">Search</button>
+    </div>
+    <div id="specialized" style="margin-top: 20px; display: none;"></div>
+    <div class="results" id="results"></div>
+    <script>
+        const websites = [
+            { url: "https://www.bombuj.si", title: "Bombuj", category: ".si", description: "Streaming TV shows" },
+            { url: "https://ww.kukaj.io", title: "Kukaj", category: ".io", description: "Movies and TV streaming" },
+            { url: "https://sweet.tv", title: "SweetTV", category: ".tv", description: "Online TV streaming" },
+            { url: "https://www.netflix.com", title: "Netflix", category: ".com", description: "Movies and TV shows" },
+            { url: "https://www.disneyplus.com", title: "Disney Plus", category: ".com", description: "Disney streaming service" },
+            { url: "https://www.hbomax.com", title: "HBO Max", category: ".com", description: "Movies and TV shows streaming" },
+            { url: "https://www.crunchyroll.com", title: "Crunchyroll", category: ".com", description: "Anime streaming service" },
+            { url: "https://www.tapas.io", title: "Tapas.io", category: ".io", description: "Webcomics and novels" },
+            { url: "https://www.webtoons.com", title: "Webtoons", category: ".com", description: "Webcomics platform" },
+            { url: "https://www.tumblr.com", title: "Tumblr", category: ".com", description: "Microblogging platform" },
+            { url: "https://www.reddit.com", title: "Reddit", category: ".com", description: "Discussion forum" },
+            { url: "https://www.instagram.com", title: "Instagram", category: ".com", description: "Photo and video sharing" },
+            { url: "https://www.messenger.com", title: "Messenger", category: ".com", description: "Instant messaging service" },
+            { url: "https://docs.google.com", title: "Google Docs", category: ".com", description: "Document editing and sharing" },
+            { url: "https://www.youtube.com", title: "YouTube", category: ".com", description: "Videos, tutorials, music" },
+            { url: "https://proton.me/mail", title: "Proton Mail", category: ".me", description: "Secure email service" },
+            { url: "https://proton.me/calendar", title: "Proton Calendar", category: ".me", description: "Private scheduling and events" },
+            { url: "https://proton.me/drive", title: "Proton Drive", category: ".me", description: "Encrypted file storage" },
+            { url: "https://proton.me/vpn", title: "Proton VPN", category: ".me", description: "Secure VPN service" },
+            { url: "https://proton.me/pass", title: "Proton Pass", category: ".me", description: "Password manager" },
+            { url: "https://proton.me/wallet", title: "Proton Wallet", category: ".me", description: "Digital wallet" },
+            { url: "https://www.github.com", title: "GitHub", category: ".com", description: "Code hosting and collaboration" }
+        ];
+
+        const specializedSites = [
+            { title: "YouTube", baseUrl: "https://www.youtube.com/results?search_query=" },
+            { title: "Wikipedia", baseUrl: "https://en.wikipedia.org/wiki/" },
+            { title: "Oxford English Dictionary", baseUrl: "https://www.oed.com/view/Entry/" }
+        ];
+
+        function performSearch() {
+            const query = document.getElementById("searchBar").value.toLowerCase().trim();
+            const results = websites.filter(site =>
+                site.title.toLowerCase().includes(query) ||
+                site.description.toLowerCase().includes(query)
+            );
+
+            const specializedResult = specializedSites.find(site => site.title.toLowerCase().includes(query));
+            const resultsDiv = document.getElementById("results");
+            const specializedDiv = document.getElementById("specialized");
+
+            if (specializedResult) {
+                specializedDiv.style.display = "block";
+                specializedDiv.innerHTML = `
+                    <h2>Specialized Result for ${specializedResult.title}</h2>
+                    <p><a href="${specializedResult.baseUrl + encodeURIComponent(query)}" target="_blank">Click here to search ${specializedResult.title}</a></p>
+                `;
+            } else {
+                specializedDiv.style.display = "none";
+            }
+
+            resultsDiv.innerHTML = results.map(result => `
+                <div class="result" onclick="window.location='${result.url}'">
+                    <h3>${result.title}</h3>
+                    <p>${result.description}</p>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
